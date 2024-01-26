@@ -8,9 +8,7 @@ import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 import at.ac.tuwien.sepr.assignment.individual.persistence.HorseDao;
 import at.ac.tuwien.sepr.assignment.individual.type.Sex;
 import java.lang.invoke.MethodHandles;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
+import java.sql.*;
 import java.util.Collection;
 import java.util.List;
 import org.slf4j.Logger;
@@ -18,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -47,6 +47,9 @@ public class HorseJdbcDao implements HorseDao {
       + "  , breed_id = ?"
       + " WHERE id = ?";
 
+  private static final String SQL_INSERT = "INSERT INTO " + TABLE_NAME
+          + " (name, sex, date_of_birth, height, weight, breed_id)"
+          + " VALUES (?, ?, ?, ?, ?, ?)";
   private final JdbcTemplate jdbcTemplate;
   private final NamedParameterJdbcTemplate jdbcNamed;
 
@@ -73,6 +76,46 @@ public class HorseJdbcDao implements HorseDao {
     }
 
     return horses.get(0);
+  }
+
+  @Override
+  public Horse create(HorseDetailDto horse) {
+    KeyHolder keyHolder = new GeneratedKeyHolder();
+
+    jdbcTemplate.update(connection -> {
+      PreparedStatement ps = connection.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS);
+      ps.setString(1, horse.name());
+      ps.setString(2, horse.sex().toString());
+      ps.setDate(3, Date.valueOf(horse.dateOfBirth()));
+      ps.setDouble(4, horse.height());
+      ps.setDouble(5, horse.weight());
+
+      if(horse.breed() != null)
+      {
+        ps.setLong(6, horse.breed().id());
+      }
+      else
+        ps.setLong(6, -1); // not really the best way of doing it
+
+      return ps;
+    }, keyHolder);
+
+    long newId = keyHolder.getKey().longValue();
+
+    Horse createdHorse = new Horse()
+            .setId(newId)
+            .setName(horse.name())
+            .setDateOfBirth(horse.dateOfBirth())
+            .setSex(horse.sex())
+            .setHeight(horse.height())
+            .setWeight(horse.weight());
+
+    if(horse.breed() != null)
+      createdHorse.setBreedId(horse.breed().id());
+    else
+      createdHorse.setBreedId(null);
+
+    return createdHorse;
   }
 
   @Override

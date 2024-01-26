@@ -1,9 +1,6 @@
 package at.ac.tuwien.sepr.assignment.individual.service;
 
-import at.ac.tuwien.sepr.assignment.individual.dto.BreedDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.HorseListDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.HorseSearchDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.*;
 import at.ac.tuwien.sepr.assignment.individual.entity.Horse;
 import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
 import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
@@ -62,13 +59,24 @@ public class HorseServiceImpl implements HorseService {
     return mapper.entityToDetailDto(updatedHorse, breeds);
   }
 
-
   @Override
   public HorseDetailDto getById(long id) throws NotFoundException {
     LOG.trace("details({})", id);
     Horse horse = dao.getById(id);
     var breeds = breedMapForSingleHorse(horse);
     return mapper.entityToDetailDto(horse, breeds);
+  }
+
+  @Override
+  public HorseDetailDto create(HorseDetailDto horse) throws ValidationException {
+    LOG.trace("creating({})", horse);
+
+    validator.validateCreateNewHorse(horse, horse.breed() != null ? breedService.findBreedsByIds(Collections.singleton(horse.breed().id())) : null);
+
+    var horseResult = dao.create(horse);
+    var breeds = breedMapForSingleHorse(horseResult);
+
+    return mapper.entityToDetailDto(horseResult, breeds);
   }
 
   private Map<Long, BreedDto> breedMapForSingleHorse(Horse horse) {

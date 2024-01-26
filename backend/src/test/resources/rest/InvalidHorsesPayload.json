@@ -1,0 +1,66 @@
+[
+    {
+        "name": "wrong sex",
+        "sex": "ars",
+        "dateOfBirth": "2018-10-10",
+        "breed": {
+            "id": -19,
+            "name": "Welsh Cob"
+        }
+    },
+    {
+        "name": "wrong sex",
+        "sex": "ars",
+        "dateOfBirth": "2018-50-12",
+        "breed": {
+            "id": -19,
+            "name": "Welsh Cob"
+        }
+    },
+    {
+        "id": -31,
+        "name": "invalid date",
+        "sex": "MALE",
+        "dateOfBirth": "2017!03-05",
+        "breed": {
+            "id": -8,
+            "name": "Haflinger"
+        }
+    },
+    {
+        "id": -30,
+        "sex": "no name",
+        "dateOfBirth": "2016-06-28",
+        "breed": {
+            "id": -14,
+            "name": "Quarter Horse"
+        }
+    },
+    {
+        "id": -29,
+        "name": "no date of birth",
+        "breed": {
+            "id": -2,
+            "name": "Appaloosa"
+        }
+    },
+    {
+        "id": -28,
+        "name": "Molly",
+        "sex": "FEMALE",
+        "dateOfBirth": "2014-04-03",
+        "breed": {
+            "id": -13,
+            "name": "Paint Horse"
+        }
+    },
+    {
+        "id": -27
+    },
+    {
+        "id": -26,
+        "name": "Daisy",
+        "sex": "FEMALE"
+    }
+
+]
