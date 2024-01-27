@@ -25,7 +25,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -142,8 +144,55 @@ public class HorseEndpointTest extends TestBase {
   }
 
   @Test
-  public void addNewInvalidHorses() throws Exception {
+  public void validationOnNewInvalidHorses() throws Exception {
 
+    HorseDetailDto noNameHorse = new HorseDetailDto(null, null, Sex.FEMALE, LocalDate.of(2002, 6, 21), 2.5f, 300, null);
+    var response = sendPostRequest(noNameHorse);
+
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
+    assertThat(response.getContentAsString()).contains("Horse name was not defined");
+    System.out.println(response.getContentAsString());
+
+    HorseDetailDto noSexHorse = new HorseDetailDto(null, "Rary", null, LocalDate.of(2002, 6, 21), 2.5f, 300, null);
+    response = sendPostRequest(noSexHorse);
+
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
+    assertThat(response.getContentAsString()).contains("Horse sex was not defined");
+
+    HorseDetailDto noDateHorse = new HorseDetailDto(null, "Rary", Sex.MALE, null, 2.5f, 300, null);
+    response = sendPostRequest(noDateHorse);
+
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
+    assertThat(response.getContentAsString()).contains("Horse date of birth is not defined");
+
+    HorseDetailDto noHeightHorse = new HorseDetailDto(null, "Rary", Sex.MALE, LocalDate.of(2002, 6, 21), 0, 300, null);
+    response = sendPostRequest(noHeightHorse);
+
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
+    assertThat(response.getContentAsString()).contains("Horse height can not be 0 / is not defines");
+
+    HorseDetailDto noWeightHorse = new HorseDetailDto(null, "Rary", Sex.MALE, LocalDate.of(2002, 6, 21), 2.5f, 0, null);
+    response = sendPostRequest(noWeightHorse);
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
+    assertThat(response.getContentAsString()).contains("Horse weight can not be 0 / is not defined");
+
+    HorseDetailDto noWeightAndNoNameHorse = new HorseDetailDto(null, null, Sex.MALE, LocalDate.of(2002, 6, 21), 2.5f, 0, null);
+    response = sendPostRequest(noWeightAndNoNameHorse);
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
+    assertThat(response.getContentAsString()).contains("Horse weight can not be 0 / is not defined");
+    assertThat(response.getContentAsString()).contains("Horse name was not defined");
+    System.out.println(response.getContentAsString());
+
+  }
+
+  private MockHttpServletResponse sendPostRequest(HorseDetailDto horse) throws Exception {
+    var body = mockMvc.perform(MockMvcRequestBuilders
+                    .post("/horses")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(horse)))
+            .andReturn();
+
+    return body.getResponse();
   }
 
 }
