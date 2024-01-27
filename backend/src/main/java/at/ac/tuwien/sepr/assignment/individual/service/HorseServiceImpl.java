@@ -53,7 +53,9 @@ public class HorseServiceImpl implements HorseService {
   @Override
   public HorseDetailDto update(HorseDetailDto horse) throws NotFoundException, ValidationException, ConflictException {
     LOG.trace("update({})", horse);
-    validator.validateForUpdate(horse);
+
+    validator.validateForUpdate(horse, horse.breed() != null ? breedService.findBreedsByIds(Collections.singleton(horse.breed().id())) : null);
+
     var updatedHorse = dao.update(horse);
     var breeds = breedMapForSingleHorse(updatedHorse);
     return mapper.entityToDetailDto(updatedHorse, breeds);

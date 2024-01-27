@@ -57,6 +57,10 @@ public class HorseEndpoint {
       HttpStatus status = HttpStatus.NOT_FOUND;
       logClientError(status, "Horse to update not found", e);
       throw new ResponseStatusException(status, e.getMessage(), e);
+    } catch (ValidationException v) {
+      HttpStatus status = HttpStatus.BAD_REQUEST;
+      logClientError(status, "Updating horse did not validate", v);
+      throw new ResponseStatusException(status, v.getMessage(), v);
     }
   }
 

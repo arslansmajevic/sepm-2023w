@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 public class HorseValidator {
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  public void validateForUpdate(HorseDetailDto horse) throws ValidationException {
+  public void validateForUpdate(HorseDetailDto horse, Stream<BreedDto> existingBreed) throws ValidationException {
     LOG.trace("validateForUpdate({})", horse);
     List<String> validationErrors = new ArrayList<>();
 
@@ -25,7 +25,7 @@ public class HorseValidator {
       validationErrors.add("No ID given");
     }
 
-    // TODO this is not complete…
+    this.validateCreateNewHorse(horse, existingBreed);
 
     if (!validationErrors.isEmpty()) {
       throw new ValidationException("Validation of horse for update failed", validationErrors);
