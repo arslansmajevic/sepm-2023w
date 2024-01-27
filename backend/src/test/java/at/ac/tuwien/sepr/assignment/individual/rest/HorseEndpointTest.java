@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import at.ac.tuwien.sepr.assignment.individual.TestBase;
+import at.ac.tuwien.sepr.assignment.individual.dto.BreedDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseListDto;
 import at.ac.tuwien.sepr.assignment.individual.type.Sex;
@@ -183,6 +184,71 @@ public class HorseEndpointTest extends TestBase {
     assertThat(response.getContentAsString()).contains("Horse name was not defined");
     System.out.println(response.getContentAsString());
 
+    HorseDetailDto notExistingBreedHorse = new HorseDetailDto(null, "Baltazar", Sex.MALE, LocalDate.of(2002, 6, 21), 2.5f, 300, new BreedDto(-502L, "really random"));
+    response = sendPostRequest(notExistingBreedHorse);
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
+    assertThat(response.getContentAsString()).contains("No such breed Id: -502");
+    System.out.println(response.getContentAsString());
+
+    HorseDetailDto nullOnIdOfBreed = new HorseDetailDto(null, "Baltazar", Sex.MALE, LocalDate.of(2002, 6, 21), 2.5f, 300, new BreedDto(0, "Andalusian"));
+    response = sendPostRequest(nullOnIdOfBreed);
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
+    assertThat(response.getContentAsString()).contains("No such breed Id: 0");
+    System.out.println(response.getContentAsString());
+
+  }
+
+  @Test
+  public void addNewValidHorses() throws Exception {
+
+    HorseDetailDto horse1 = new HorseDetailDto(null, "Lola", Sex.FEMALE, LocalDate.of(2002, 6, 21), 2.5f, 300, null);
+    var response = sendPostRequest(horse1);
+
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+    System.out.println("Response: " + response.getContentAsString());
+
+    List<HorseListDto> newCreatedHorse = objectMapper.readerFor(HorseListDto.class)
+            .<HorseListDto>readValues(response.getContentAsByteArray()).readAll();
+
+    assertThat(newCreatedHorse).isNotNull();
+    assertThat(newCreatedHorse)
+            .hasSize(1)
+            .extracting(HorseListDto::name, HorseListDto::sex, HorseListDto::dateOfBirth, HorseListDto::breed)
+            .contains(
+                    tuple("Lola", Sex.FEMALE, LocalDate.of(2002, 6, 21), null));
+
+    HorseDetailDto horse2 = new HorseDetailDto(502L, "Nanny with id ignored", Sex.FEMALE, LocalDate.of(2010, 6, 21), 1.5f, 150, null);
+    response = sendPostRequest(horse2);
+
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+    System.out.println("Response: " + response.getContentAsString());
+
+    newCreatedHorse = objectMapper.readerFor(HorseListDto.class)
+            .<HorseListDto>readValues(response.getContentAsByteArray()).readAll();
+
+    assertThat(newCreatedHorse).isNotNull();
+    assertThat(newCreatedHorse)
+            .hasSize(1)
+            .extracting(HorseListDto::name, HorseListDto::sex, HorseListDto::dateOfBirth, HorseListDto::breed)
+            .contains(
+                    tuple("Nanny with id ignored", Sex.FEMALE, LocalDate.of(2010, 6, 21), null));
+
+    HorseDetailDto horse3 = new HorseDetailDto(3L, "Nanny", Sex.FEMALE, LocalDate.of(2010, 6, 21), 1.5f, 150, new BreedDto(-1, null));
+    response = sendPostRequest(horse3);
+
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+    System.out.println("Response: " + response.getContentAsString());
+
+    newCreatedHorse = objectMapper.readerFor(HorseListDto.class)
+            .<HorseListDto>readValues(response.getContentAsByteArray()).readAll();
+
+    assertThat(newCreatedHorse).isNotNull();
+    assertThat(newCreatedHorse)
+            .hasSize(1)
+            .extracting(HorseListDto::name, HorseListDto::sex, HorseListDto::dateOfBirth, (h) -> h.breed().name())
+            .containsExactlyInAnyOrder(
+                    tuple("Nanny", Sex.FEMALE, LocalDate.of(2010, 6, 21),
+                            "Andalusian"));
   }
 
   private MockHttpServletResponse sendPostRequest(HorseDetailDto horse) throws Exception {
