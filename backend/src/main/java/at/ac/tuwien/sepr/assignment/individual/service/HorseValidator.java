@@ -32,50 +32,49 @@ public class HorseValidator {
     }
   }
 
-  public void validateCreateNewHorse(HorseDetailDto horse, Stream<BreedDto> existingBreed) throws ValidationException{
+  public void validateCreateNewHorse(HorseDetailDto horse, Stream<BreedDto> existingBreed) throws ValidationException {
     LOG.trace("validateCreateNewHorse({})", horse);
 
     List<String> validationErrors = new ArrayList<>();
 
-    if(horse.name() == null){
+    if (horse.name() == null) {
       validationErrors.add("Horse name was not defined");
     }
 
-    if(horse.sex() == null){
+    if (horse.sex() == null) {
       validationErrors.add("Horse sex was not defined");
-    }
-    else{
-      if(!horse.sex().equals(Sex.FEMALE)){
-        if(!horse.sex().equals(Sex.MALE)){
+    } else {
+      if (!horse.sex().equals(Sex.FEMALE)) {
+        if (!horse.sex().equals(Sex.MALE)) {
           validationErrors.add("Horse sex is an unvalid sex");
         }
       }
     }
 
-    if(horse.dateOfBirth() == null){
+    if (horse.dateOfBirth() == null) {
       validationErrors.add("Horse date of birth is not defined");
     }
 
-    if(horse.height() == 0.0){
-      validationErrors.add("Horse height can not be 0 / is not defines");
+    if (horse.height() == 0.0) {
+      validationErrors.add("Horse height can not be 0 / is not defined");
     }
 
-    if(horse.weight() == 0.0){
+    if (horse.weight() == 0.0) {
       validationErrors.add("Horse weight can not be 0 / is not defined");
     }
 
-    if(existingBreed != null){
+    if (existingBreed != null) {
       int size = (int) existingBreed.count();
-      if(size > 1){ // should not ever happen
+      if (size > 1) { // should not ever happen
         validationErrors.add("There are too many breeds with this breed Id" + horse.breed().id());
       }
 
-      if(size == 0){
+      if (size == 0) {
         validationErrors.add("No such breed Id: " + horse.breed().id());
       }
     }
 
-    if(!validationErrors.isEmpty()){
+    if (!validationErrors.isEmpty()) {
       throw new ValidationException("Validation of horse for create failed", validationErrors);
     }
   }

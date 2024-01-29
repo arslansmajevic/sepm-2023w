@@ -1,6 +1,9 @@
 package at.ac.tuwien.sepr.assignment.individual.service;
 
-import at.ac.tuwien.sepr.assignment.individual.dto.*;
+import at.ac.tuwien.sepr.assignment.individual.dto.BreedDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.HorseListDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.HorseSearchDto;
 import at.ac.tuwien.sepr.assignment.individual.entity.Horse;
 import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
 import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;

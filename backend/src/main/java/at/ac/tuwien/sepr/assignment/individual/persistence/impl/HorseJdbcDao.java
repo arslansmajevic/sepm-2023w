@@ -8,7 +8,12 @@ import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 import at.ac.tuwien.sepr.assignment.individual.persistence.HorseDao;
 import at.ac.tuwien.sepr.assignment.individual.type.Sex;
 import java.lang.invoke.MethodHandles;
-import java.sql.*;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
 import java.util.Collection;
 import java.util.List;
 import org.slf4j.Logger;
@@ -90,12 +95,11 @@ public class HorseJdbcDao implements HorseDao {
       ps.setDouble(4, horse.height());
       ps.setDouble(5, horse.weight());
 
-      if(horse.breed() != null)
-      {
+      if (horse.breed() != null) {
         ps.setLong(6, horse.breed().id());
-      }
-      else
+      } else {
         ps.setLong(6, -1); // not really the best way of doing it
+      }
 
       return ps;
     }, keyHolder);
@@ -110,10 +114,11 @@ public class HorseJdbcDao implements HorseDao {
             .setHeight(horse.height())
             .setWeight(horse.weight());
 
-    if(horse.breed() != null)
+    if (horse.breed() != null) {
       createdHorse.setBreedId(horse.breed().id());
-    else
+    } else {
       createdHorse.setBreedId(null);
+    }
 
     return createdHorse;
   }
@@ -141,7 +146,7 @@ public class HorseJdbcDao implements HorseDao {
         horse.dateOfBirth(),
         horse.height(),
         horse.weight(),
-        horse.breed().id(),
+        horse.breed() != null ? horse.breed().id() : -1,
         horse.id());
     if (updated == 0) {
       throw new NotFoundException("Could not update horse with ID " + horse.id() + ", because it does not exist");
@@ -154,8 +159,7 @@ public class HorseJdbcDao implements HorseDao {
         .setDateOfBirth(horse.dateOfBirth())
         .setHeight(horse.height())
         .setWeight(horse.weight())
-        .setBreedId(horse.breed().id())
-        ;
+        .setBreedId(horse.breed() != null ? horse.breed().id() : -1);
   }
 
 

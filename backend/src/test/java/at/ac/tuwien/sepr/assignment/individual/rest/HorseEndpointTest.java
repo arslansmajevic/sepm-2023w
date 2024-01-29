@@ -170,7 +170,7 @@ public class HorseEndpointTest extends TestBase {
     response = sendPostRequest(noHeightHorse);
 
     assertThat(response.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
-    assertThat(response.getContentAsString()).contains("Horse height can not be 0 / is not defines");
+    assertThat(response.getContentAsString()).contains("Horse height can not be 0 / is not defined");
 
     HorseDetailDto noWeightHorse = new HorseDetailDto(null, "Rary", Sex.MALE, LocalDate.of(2002, 6, 21), 2.5f, 0, null);
     response = sendPostRequest(noWeightHorse);
@@ -184,7 +184,11 @@ public class HorseEndpointTest extends TestBase {
     assertThat(response.getContentAsString()).contains("Horse name was not defined");
     System.out.println(response.getContentAsString());
 
-    HorseDetailDto notExistingBreedHorse = new HorseDetailDto(null, "Baltazar", Sex.MALE, LocalDate.of(2002, 6, 21), 2.5f, 300, new BreedDto(-502L, "really random"));
+    HorseDetailDto notExistingBreedHorse = new HorseDetailDto(null,
+            "Baltazar",
+            Sex.MALE,
+            LocalDate.of(2002, 6, 21), 2.5f, 300,
+            new BreedDto(-502L, "really random"));
     response = sendPostRequest(notExistingBreedHorse);
     assertThat(response.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
     assertThat(response.getContentAsString()).contains("No such breed Id: -502");
@@ -251,6 +255,47 @@ public class HorseEndpointTest extends TestBase {
                             "Andalusian"));
   }
 
+  @Test
+  public void editHorseWithInvalidContent() throws Exception {
+    HorseDetailDto horse1 = new HorseDetailDto(null, "Lola", Sex.FEMALE, LocalDate.of(2002, 6, 21), 2.5f, 300, null);
+    var response = sendPostRequest(horse1);
+    System.out.println("Created Horse: " + response.getContentAsString());
+
+    HorseDetailDto newCreatedHorse = objectMapper.readerFor(HorseDetailDto.class)
+            .<HorseDetailDto>readValue(response.getContentAsByteArray());
+
+    response = sendPutRequest(
+            new HorseDetailDto(null, "Lola updated", Sex.FEMALE, LocalDate.of(2002, 6, 21), 0, 0, null),
+            newCreatedHorse.id());
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
+    assertThat(response.getContentAsString()).contains("Horse height can not be 0 / is not defined");
+    assertThat(response.getContentAsString()).contains("Horse weight can not be 0 / is not defined");
+
+    response = sendPutRequest(
+            new HorseDetailDto(null, null, null, LocalDate.of(2002, 6, 21), 2.5f, 300, null),
+            newCreatedHorse.id());
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
+    assertThat(response.getContentAsString()).contains("Horse name was not defined");
+
+    response = sendPutRequest(
+            new HorseDetailDto(null, "Lola updated", Sex.FEMALE, LocalDate.of(2002, 6, 21), 2.5f, 300, new BreedDto(-1, null)),
+            -5000);
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+    System.out.println(response.getContentAsString());
+    // assertThat(response.getContentAsString()).contains("No such breed Id");
+
+    response = sendPutRequest(
+            new HorseDetailDto(null, "Lola updated", Sex.FEMALE, LocalDate.of(2002, 6, 21), 2.5f, 300, null),
+            -5000);
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+    System.out.println(response.getContentAsString());
+
+    response = sendPutRequest(
+            new HorseDetailDto(null, "Lola updated", Sex.FEMALE, LocalDate.of(2002, 6, 21), 0, 0, new BreedDto(-5000, null)),
+            newCreatedHorse.id());
+    assertThat(response.getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value());
+  }
+
   private MockHttpServletResponse sendPostRequest(HorseDetailDto horse) throws Exception {
     var body = mockMvc.perform(MockMvcRequestBuilders
                     .post("/horses")
@@ -261,4 +306,13 @@ public class HorseEndpointTest extends TestBase {
     return body.getResponse();
   }
 
+  private MockHttpServletResponse sendPutRequest(HorseDetailDto horse, long id) throws Exception {
+    var body = mockMvc.perform(MockMvcRequestBuilders
+                    .put("/horses/" + id)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(horse)))
+            .andReturn();
+
+    return body.getResponse();
+  }
 }

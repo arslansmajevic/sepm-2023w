@@ -46,7 +46,7 @@ public interface HorseDao {
   /**
    * Creates a new horse and assigns it a new id.
    *
-   * @param horse
+   * @param horse the horse
    * @return the newly created horse
    */
   Horse create(HorseDetailDto horse);
