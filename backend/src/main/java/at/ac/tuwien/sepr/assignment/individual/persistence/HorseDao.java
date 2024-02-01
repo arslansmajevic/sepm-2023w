@@ -50,4 +50,6 @@ public interface HorseDao {
    * @return the newly created horse
    */
   Horse create(HorseDetailDto horse);
+
+  String delete(long id);
 }

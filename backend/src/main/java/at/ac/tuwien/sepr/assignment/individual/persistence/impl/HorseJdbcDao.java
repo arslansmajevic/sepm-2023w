@@ -55,6 +55,8 @@ public class HorseJdbcDao implements HorseDao {
   private static final String SQL_INSERT = "INSERT INTO " + TABLE_NAME
           + " (name, sex, date_of_birth, height, weight, breed_id)"
           + " VALUES (?, ?, ?, ?, ?, ?)";
+
+  private static final String SQL_DELETE = "DELETE FROM " + TABLE_NAME + " WHERE id = ?";
   private final JdbcTemplate jdbcTemplate;
   private final NamedParameterJdbcTemplate jdbcNamed;
 
@@ -121,6 +123,13 @@ public class HorseJdbcDao implements HorseDao {
     }
 
     return createdHorse;
+  }
+
+  @Override
+  public String delete(long id) {
+    jdbcTemplate.update(SQL_DELETE, id);
+
+    return "Horse %d was deleted successfully".formatted(id);
   }
 
   @Override

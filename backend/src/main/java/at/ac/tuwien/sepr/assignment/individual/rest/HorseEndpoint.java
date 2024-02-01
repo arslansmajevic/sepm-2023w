@@ -12,13 +12,7 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
@@ -55,7 +49,7 @@ public class HorseEndpoint {
 
   @PutMapping("{id}")
   public HorseDetailDto update(@PathVariable long id, @RequestBody HorseDetailDto toUpdate) throws ValidationException, ConflictException {
-    LOG.info("PUT " + BASE_PATH + "/{}", toUpdate);
+    LOG.info("PUT " + BASE_PATH + "/{}", id);
     LOG.debug("Body of request:\n{}", toUpdate);
     try {
       return service.update(toUpdate.withId(id));
@@ -84,6 +78,18 @@ public class HorseEndpoint {
     }
   }
 
+  @DeleteMapping("{id}")
+  public String delete(@PathVariable long id){
+    LOG.info("DELETE " + BASE_PATH + "/{}", id);
+
+    try {
+      return service.delete(id);
+    } catch (NotFoundException n) {
+      HttpStatus status = HttpStatus.NOT_FOUND;
+      logClientError(status, "Horse could not be found", n);
+      throw new ResponseStatusException(status, n.getMessage(), n);
+    }
+  }
 
   private void logClientError(HttpStatus status, String message, Exception e) {
     LOG.warn("{} {}: {}: {}", status.value(), message, e.getClass().getSimpleName(), e.getMessage());
