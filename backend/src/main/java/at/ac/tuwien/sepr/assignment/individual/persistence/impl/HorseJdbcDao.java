@@ -100,7 +100,8 @@ public class HorseJdbcDao implements HorseDao {
       if (horse.breed() != null) {
         ps.setLong(6, horse.breed().id());
       } else {
-        ps.setLong(6, -1); // not really the best way of doing it
+        // ps.setLong(6, -1); // not really the best way of doing it
+        ps.setNull(6, Types.INTEGER);
       }
 
       return ps;
