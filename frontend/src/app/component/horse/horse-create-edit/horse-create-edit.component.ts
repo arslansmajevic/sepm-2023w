@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {NgForm, NgModel} from '@angular/forms';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {ToastrService} from 'ngx-toastr';
 import {Observable, of, retry} from 'rxjs';
 import {Horse} from 'src/app/dto/horse';
@@ -82,6 +82,8 @@ export class HorseCreateEditComponent implements OnInit {
     switch (this.mode) {
       case HorseCreateEditMode.create:
         return 'Create New Horse';
+      case HorseCreateEditMode.edit:
+        return 'Edit Horse';
       default:
         return '?';
     }
@@ -91,6 +93,8 @@ export class HorseCreateEditComponent implements OnInit {
     switch (this.mode) {
       case HorseCreateEditMode.create:
         return 'Create';
+      case HorseCreateEditMode.edit:
+        return 'Update';
       default:
         return '?';
     }
@@ -113,6 +117,8 @@ export class HorseCreateEditComponent implements OnInit {
     switch (this.mode) {
       case HorseCreateEditMode.create:
         return 'created';
+      case HorseCreateEditMode.edit:
+        return 'updated';
       default:
         return '?';
     }
@@ -122,6 +128,21 @@ export class HorseCreateEditComponent implements OnInit {
     this.route.data.subscribe(data => {
       this.mode = data.mode;
     });
+
+    if (this.mode === HorseCreateEditMode.edit) {
+      this.route.paramMap.subscribe((params: ParamMap) => {
+
+        const horseId = params.get('id');
+        if(horseId !== null){
+          const id = parseInt(horseId, 10);
+          this.service.getById(id).subscribe((horse: Horse) => {
+            this.horse = horse;
+            this.heightSet = true;
+            this.weightSet = true;
+          })
+        }
+      });
+    }
   }
 
   public dynamicCssClassesForInput(input: NgModel): any {
