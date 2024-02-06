@@ -139,6 +139,8 @@ export class HorseCreateEditComponent implements OnInit {
             this.horse = horse;
             this.heightSet = true;
             this.weightSet = true;
+            this.dateOfBirthSet = true;
+            console.log(this.horse);
           })
         }
       });
