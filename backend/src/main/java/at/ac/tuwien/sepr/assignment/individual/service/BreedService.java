@@ -2,6 +2,8 @@ package at.ac.tuwien.sepr.assignment.individual.service;
 
 import at.ac.tuwien.sepr.assignment.individual.dto.BreedDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.BreedSearchDto;
+import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
+
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -30,4 +32,6 @@ public interface BreedService {
    * @return a stream of breeds matching the parameters
    */
   Stream<BreedDto> search(BreedSearchDto searchParams);
+
+  BreedDto create(BreedDto horse) throws ValidationException;
 }

@@ -2,6 +2,7 @@ package at.ac.tuwien.sepr.assignment.individual.service;
 
 import at.ac.tuwien.sepr.assignment.individual.dto.BreedDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.BreedSearchDto;
+import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
 import at.ac.tuwien.sepr.assignment.individual.mapper.BreedMapper;
 import at.ac.tuwien.sepr.assignment.individual.persistence.BreedDao;
 import java.lang.invoke.MethodHandles;
@@ -16,10 +17,12 @@ public class BreedServiceImpl implements BreedService {
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private BreedDao dao;
   private BreedMapper mapper;
+  private final BreedValidator breedValidator;
 
-  public BreedServiceImpl(BreedDao dao, BreedMapper mapper) {
+  public BreedServiceImpl(BreedDao dao, BreedMapper mapper, BreedValidator breedValidator) {
     this.dao = dao;
     this.mapper = mapper;
+    this.breedValidator = breedValidator;
   }
 
   @Override
@@ -44,5 +47,14 @@ public class BreedServiceImpl implements BreedService {
     return dao.search(searchParams)
         .stream()
         .map(mapper::entityToDto);
+  }
+
+  @Override
+  public BreedDto create(BreedDto breed) throws ValidationException {
+    LOG.trace("create({})", breed);
+
+    breedValidator.validateForCreate(breed, allBreeds());
+
+    return dao.create(breed);
   }
 }

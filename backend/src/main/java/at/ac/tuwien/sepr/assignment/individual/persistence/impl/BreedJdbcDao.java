@@ -1,18 +1,24 @@
 package at.ac.tuwien.sepr.assignment.individual.persistence.impl;
 
+import at.ac.tuwien.sepr.assignment.individual.dto.BreedDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.BreedSearchDto;
 import at.ac.tuwien.sepr.assignment.individual.entity.Breed;
 import at.ac.tuwien.sepr.assignment.individual.persistence.BreedDao;
 import java.lang.invoke.MethodHandles;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -29,31 +35,53 @@ public class BreedJdbcDao implements BreedDao {
           + " WHERE UPPER(name) LIKE UPPER('%'||:name||'%')";
   private static final String SQL_LIMIT_CLAUSE = " LIMIT :limit";
 
-  private final NamedParameterJdbcTemplate jdbcTemplate;
+  private static final String SQL_CREATE_BREED = "INSERT INTO " + TABLE_NAME
+          + " (name)"
+          + " VALUES (?)";
 
-  public BreedJdbcDao(NamedParameterJdbcTemplate jdbcTemplate) {
+  private final NamedParameterJdbcTemplate jdbcNamed;
+  private final JdbcTemplate jdbcTemplate;
+
+  public BreedJdbcDao(NamedParameterJdbcTemplate jdbcNamed, JdbcTemplate jdbcTemplate) {
+    this.jdbcNamed = jdbcNamed;
     this.jdbcTemplate = jdbcTemplate;
   }
 
   @Override
   public Collection<Breed> allBreeds() {
     LOG.trace("allBreeds()");
-    return jdbcTemplate.query(SQL_ALL, this::mapRow);
+    return jdbcNamed.query(SQL_ALL, this::mapRow);
   }
 
   @Override
   public Collection<Breed> findBreedsById(Set<Long> breedIds) {
     LOG.trace("findBreedsById({})", breedIds);
-    return jdbcTemplate.query(SQL_FIND_BY_IDS, Map.of("ids", breedIds), this::mapRow);
+    return jdbcNamed.query(SQL_FIND_BY_IDS, Map.of("ids", breedIds), this::mapRow);
   }
 
   @Override
   public Collection<Breed> search(BreedSearchDto searchParams) {
-    String query = SQL_SEARCH;
+    String query = searchParams.name() != null ? SQL_SEARCH : SQL_ALL;
+    System.out.println(searchParams);
     if (searchParams.limit() != null) {
       query += SQL_LIMIT_CLAUSE;
     }
-    return jdbcTemplate.query(query, new BeanPropertySqlParameterSource(searchParams), this::mapRow);
+    return jdbcNamed.query(query, new BeanPropertySqlParameterSource(searchParams), this::mapRow);
+  }
+
+  @Override
+  public BreedDto create(BreedDto breed) {
+    KeyHolder keyHolder = new GeneratedKeyHolder();
+
+    jdbcTemplate.update(connection -> {
+      PreparedStatement ps = connection.prepareStatement(SQL_CREATE_BREED, Statement.RETURN_GENERATED_KEYS);
+      ps.setString(1, breed.name());
+      return ps;
+    }, keyHolder);
+
+    long breedId = keyHolder.getKey().longValue();
+
+    return new BreedDto(breedId, breed.name());
   }
 
   private Breed mapRow(ResultSet resultSet, int i) throws SQLException {
