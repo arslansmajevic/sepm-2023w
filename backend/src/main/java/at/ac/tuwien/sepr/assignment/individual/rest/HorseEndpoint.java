@@ -38,6 +38,7 @@ public class HorseEndpoint {
   public Stream<HorseListDto> searchHorses(HorseSearchDto searchParameters) {
     LOG.info("GET " + BASE_PATH);
     LOG.debug("request parameters: {}", searchParameters);
+    // Stream<HorseListDto> myhorses = service.search(searchParameters);
     return service.search(searchParameters);
   }
 

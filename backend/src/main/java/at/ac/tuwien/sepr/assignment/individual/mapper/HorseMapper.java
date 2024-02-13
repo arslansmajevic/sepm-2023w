@@ -30,6 +30,16 @@ public class HorseMapper {
       return null;
     }
 
+    if (horse.getBreedId() == 0) {
+      return new HorseListDto(
+              horse.getId(),
+              horse.getName(),
+              horse.getSex(),
+              horse.getDateOfBirth(),
+              null
+      );
+    }
+
     var breed = Optional.of(breeds.get(horse.getBreedId()))
         .orElseThrow(() -> new FatalException(
             "Saved horse with id " + horse.getId() + " refers to non-existing breed with id " + horse.getBreedId()));
