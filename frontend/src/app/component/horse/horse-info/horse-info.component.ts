@@ -58,7 +58,7 @@ export class HorseInfoComponent {
   }
 
   public get heading(): string {
-    return 'Info';
+    return 'Info ' + this.horse.name;
   }
 
   get sex(): string {
@@ -81,7 +81,7 @@ export class HorseInfoComponent {
         this.weightSet = true;
         this.dateOfBirthSet = true;
 
-        console.log(horse)
+        // console.log(horse)
       })
     }
   });
@@ -89,7 +89,29 @@ export class HorseInfoComponent {
 
 
   public formatBreedName(breed: Breed | null): string {
-    return breed?.name ?? '';
+    return breed?.name ?? '\u200B';
   }
 
+  public deleteHorse(id: number): void {
+    console.log('Deleting horse:', id);
+
+    if (id !== undefined) {
+      this.service.delete(id).subscribe(
+        (response: string) => {
+          this.notification.success(response);
+          this.router.navigate(['/horses']);
+        },
+        error => {
+          console.log('Deleting failed', error);
+          this.notification.error("The horse has been already deleted!");
+          this.router.navigate(['/horses']);
+        }
+      );
+    } else {
+      console.error("Invalid horse ID");
+      // should not happen
+      this.notification.error('The horse has not been loaded');
+      this.router.navigate(['horses']);
+    }
+  }
 }
