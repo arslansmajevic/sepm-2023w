@@ -41,6 +41,8 @@ END SANITY CHECK BANNER -->
     </label>
     <input type="text" id="searchHorseName" name="searchHorseName"
            class="form-control"
+           [(ngModel)]="searchParams.name"
+           (ngModelChange)="searchChanged()"
            >
   </div>
   <div class="ms-1">
@@ -120,10 +122,11 @@ END SANITY CHECK BANNER -->
         <td>{{horse.name}}</td>
         <td>{{horse.sex === 'FEMALE' ? 'Female' : 'Male'}}</td>
         <td>{{horse.dateOfBirth.toLocaleDateString()}}</td>
-        <td>{{horse.breed.name}}</td>
+        <td>{{horse.breed ? horse.breed.name : ""}}</td>
         <td>
           <div class="btn-group">
             <a class="btn btn-sm responsive-info-button"
+               [routerLink]="['info', horse.id]"
                aria-label="Show horse details">
               <i class="bi bi-info-lg"></i>
             </a>
