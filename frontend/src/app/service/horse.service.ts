@@ -63,4 +63,7 @@ export class HorseService {
     );
   }
 
+  delete(id: number): Observable<string> {
+    return this.http.delete(`${baseUri}/${id}`, { responseType: 'text' });
+  }
 }

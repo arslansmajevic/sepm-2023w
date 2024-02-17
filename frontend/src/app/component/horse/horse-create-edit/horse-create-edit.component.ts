@@ -186,4 +186,27 @@ export class HorseCreateEditComponent implements OnInit {
     }
   }
 
+  public deleteHorse(id: number): void {
+    console.log('Deleting horse:', id);
+
+    if (id !== undefined) {
+      this.service.delete(id).subscribe(
+        (response: string) => {
+          this.notification.success(response);
+          this.router.navigate(['/horses']);
+        },
+        error => {
+          console.log('Deleting failed', error);
+          this.notification.error("The horse has been already deleted!");
+          this.router.navigate(['/horses']);
+        }
+      );
+    } else {
+      console.error("Invalid horse ID");
+      // should not happen
+      this.notification.error('The horse has not been loaded');
+      this.router.navigate(['horses']);
+    }
+  }
+
 }

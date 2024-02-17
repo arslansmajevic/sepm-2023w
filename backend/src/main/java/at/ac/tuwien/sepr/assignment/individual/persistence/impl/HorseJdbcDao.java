@@ -127,10 +127,10 @@ public class HorseJdbcDao implements HorseDao {
   }
 
   @Override
-  public String delete(long id) {
+  public String delete(long id, String name) {
     jdbcTemplate.update(SQL_DELETE, id);
 
-    return "Horse %d was deleted successfully".formatted(id);
+    return "Horse %d %s was deleted successfully".formatted(id, name);
   }
 
   @Override

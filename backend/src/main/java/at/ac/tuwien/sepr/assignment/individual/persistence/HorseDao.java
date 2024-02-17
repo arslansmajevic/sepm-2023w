@@ -51,5 +51,5 @@ public interface HorseDao {
    */
   Horse create(HorseDetailDto horse);
 
-  String delete(long id);
+  String delete(long id, String name);
 }

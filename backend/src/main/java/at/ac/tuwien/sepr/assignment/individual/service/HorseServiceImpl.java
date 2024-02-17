@@ -94,7 +94,7 @@ public class HorseServiceImpl implements HorseService {
       throw new NotFoundException("No horse with id %d found".formatted(id));
     }
 
-    return dao.delete(horse.getId());
+    return dao.delete(horse.getId(), horse.getName());
   }
 
   private Map<Long, BreedDto> breedMapForSingleHorse(Horse horse) {
