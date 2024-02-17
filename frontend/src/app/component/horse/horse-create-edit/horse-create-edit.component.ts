@@ -169,6 +169,9 @@ export class HorseCreateEditComponent implements OnInit {
         case HorseCreateEditMode.create:
           observable = this.service.create(this.horse);
           break;
+        case HorseCreateEditMode.edit:
+          observable = this.service.update(this.horse);
+          break;
         default:
           console.error('Unknown HorseCreateEditMode', this.mode);
           return;

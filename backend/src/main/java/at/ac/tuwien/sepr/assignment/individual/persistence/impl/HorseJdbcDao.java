@@ -156,7 +156,7 @@ public class HorseJdbcDao implements HorseDao {
         horse.dateOfBirth(),
         horse.height(),
         horse.weight(),
-        horse.breed() != null ? horse.breed().id() : -1,
+        horse.breed() != null ? horse.breed().id() : null,
         horse.id());
     if (updated == 0) {
       throw new NotFoundException("Could not update horse with ID " + horse.id() + ", because it does not exist");
