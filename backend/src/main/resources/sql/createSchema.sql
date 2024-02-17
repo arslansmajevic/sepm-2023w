@@ -15,3 +15,20 @@ CREATE TABLE IF NOT EXISTS horse
   weight NUMERIC(7,2),
   breed_id BIGINT REFERENCES breed(id)
 );
+
+CREATE TABLE IF NOT EXISTS tournament
+(
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  date_of_start DATE NOT NULL,
+  date_of_end DATE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS participation
+(
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  tournament_id BIGINT,
+  horse_id BIGINT,
+  FOREIGN KEY (tournament_id) REFERENCES tournament(id),
+  FOREIGN KEY (horse_id) REFERENCES horse(id)
+);

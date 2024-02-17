@@ -1,9 +1,10 @@
 -- insert initial test data
 -- the IDs are hardcoded to enable references between further test data
 -- negative IDs are used to not interfere with user-entered data and allow clean deletion of test data
-
+DELETE FROM participation where id < 0;
+DELETE FROM tournament where id < 0;
 DELETE FROM horse WHERE id < 0;
-DELETE  FROM breed WHERE id < 0;
+DELETE FROM breed WHERE id < 0;
 
 INSERT INTO breed (id, name)
 VALUES
@@ -64,3 +65,26 @@ VALUES
     (-31, 'Leo', 'MALE', '2017-03-05', 1.70, 720, -8),
     (-32, 'Luna', 'FEMALE', '2018-10-10', 1.62, 670, -19);
 
+INSERT INTO tournament (id, name, date_of_start, date_of_end)
+VALUES
+    (-1, '2023 Wien Race', '2023-08-05', '2023-11-05'),
+    (-2, '2022 Sarajevo Race', '2022-05-05', '2022-05-05');
+
+INSERT INTO participation (id, tournament_id, horse_id)
+VALUES
+    (-1, -1, -1),
+    (-2, -1, -2),
+    (-3, -1, -3),
+    (-4, -1, -4),
+    (-5, -1, -5),
+    (-6, -1, -6),
+    (-7, -1, -7),
+    (-8, -1, -8),
+    (-9, -2, -1),
+    (-10, -2, -2),
+    (-11, -2, -3),
+    (-12, -2, -4),
+    (-13, -2, -5),
+    (-14, -2, -6),
+    (-15, -2, -7),
+    (-16, -2, -8);
