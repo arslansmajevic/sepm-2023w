@@ -49,8 +49,8 @@ public class Tournament {
     return "Tournament{"
             + "id=" + id
             + ", name='" + name + '\''
-            + ", dateOfStart=" + dateOfStart
-            + ", dateOfEnd=" + dateOfEnd
+            + ", startDate=" + dateOfStart
+            + ", endDate=" + dateOfEnd
             + '}';
   }
 }

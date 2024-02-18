@@ -30,8 +30,8 @@ public class TournamentJdbcDao implements TournamentDao {
         + "t.date_of_end as \"date_of_end\" "
         + "FROM " + TABLE_NAME + " t "
         + "WHERE (:name IS NULL OR UPPER(t.name) LIKE UPPER('%'||:name||'%')) "
-        + "AND (:dateOfStart IS NULL OR t.date_of_end >= :dateOfStart) "
-        + "AND (:dateOfEnd IS NULL OR t.date_of_start <= :dateOfEnd)";
+        + "AND (:startDate IS NULL OR t.date_of_end >= :startDate) "
+        + "AND (:endDate IS NULL OR t.date_of_start <= :endDate)";
   private static final String SQL_LIMIT_CLAUSE = " LIMIT :limit";
 
   public TournamentJdbcDao(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate jdbcNamed) {

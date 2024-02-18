@@ -4,7 +4,6 @@ import at.ac.tuwien.sepr.assignment.individual.dto.TournamentListDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentSearchDto;
 import at.ac.tuwien.sepr.assignment.individual.mapper.TournamentMapper;
 import at.ac.tuwien.sepr.assignment.individual.persistence.TournamentDao;
-import at.ac.tuwien.sepr.assignment.individual.persistence.impl.TournamentJdbcDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -29,6 +28,6 @@ public class TournamentServiceImpl implements TournamentService {
     var tournaments = dao.search(searchDto);
     return tournaments.stream()
             .map(mapper::entityToListDto)
-            .sorted((t1, t2) -> t2.dateOfStart().compareTo(t1.dateOfStart()));
+            .sorted((t1, t2) -> t2.startDate().compareTo(t1.startDate()));
   }
 }
