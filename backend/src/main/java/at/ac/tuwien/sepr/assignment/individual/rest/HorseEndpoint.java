@@ -6,7 +6,7 @@ import at.ac.tuwien.sepr.assignment.individual.dto.HorseSearchDto;
 import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
 import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
-import at.ac.tuwien.sepr.assignment.individual.service.HorseService;
+import at.ac.tuwien.sepr.assignment.individual.service.service.HorseService;
 import java.lang.invoke.MethodHandles;
 import java.util.stream.Stream;
 import org.slf4j.Logger;

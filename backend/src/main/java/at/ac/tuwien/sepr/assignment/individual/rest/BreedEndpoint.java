@@ -2,9 +2,8 @@ package at.ac.tuwien.sepr.assignment.individual.rest;
 
 import at.ac.tuwien.sepr.assignment.individual.dto.BreedDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.BreedSearchDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
-import at.ac.tuwien.sepr.assignment.individual.service.BreedService;
+import at.ac.tuwien.sepr.assignment.individual.service.service.BreedService;
 import java.lang.invoke.MethodHandles;
 import java.util.stream.Stream;
 import org.slf4j.Logger;
