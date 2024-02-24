@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import at.ac.tuwien.sepr.assignment.individual.TestBase;
-import at.ac.tuwien.sepr.assignment.individual.dto.HorseSearchDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.horse.HorseSearchDto;
 import at.ac.tuwien.sepr.assignment.individual.entity.Horse;
 import at.ac.tuwien.sepr.assignment.individual.type.Sex;
 import java.time.LocalDate;

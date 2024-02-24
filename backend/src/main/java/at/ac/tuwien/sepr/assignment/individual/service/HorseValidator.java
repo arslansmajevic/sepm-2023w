@@ -1,7 +1,7 @@
 package at.ac.tuwien.sepr.assignment.individual.service;
 
 import at.ac.tuwien.sepr.assignment.individual.dto.BreedDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.horse.HorseDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;

@@ -29,6 +29,21 @@ CREATE TABLE IF NOT EXISTS participation
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
   tournament_id BIGINT,
   horse_id BIGINT,
+  entry BIGINT,
   FOREIGN KEY (tournament_id) REFERENCES tournament(id),
   FOREIGN KEY (horse_id) REFERENCES horse(id)
+);
+
+CREATE TABLE IF NOT EXISTS race
+(
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  first_place BIGINT,
+  second_place BIGINT,
+  winner BIGINT,
+  tournament_id BIGINT,
+  round BIGINT,
+  FOREIGN KEY (first_place) REFERENCES horse(id),
+  FOREIGN KEY (second_place) REFERENCES horse(id),
+  FOREIGN KEY (winner) REFERENCES horse(id),
+  FOREIGN KEY (tournament_id) REFERENCES tournament(id)
 );

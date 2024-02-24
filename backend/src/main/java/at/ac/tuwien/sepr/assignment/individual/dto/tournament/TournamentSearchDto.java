@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepr.assignment.individual.dto;
+package at.ac.tuwien.sepr.assignment.individual.dto.tournament;
 
 import org.springframework.format.annotation.DateTimeFormat;
 

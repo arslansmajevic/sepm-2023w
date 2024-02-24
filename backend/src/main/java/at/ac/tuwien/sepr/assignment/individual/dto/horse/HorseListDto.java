@@ -1,5 +1,6 @@
-package at.ac.tuwien.sepr.assignment.individual.dto;
+package at.ac.tuwien.sepr.assignment.individual.dto.horse;
 
+import at.ac.tuwien.sepr.assignment.individual.dto.BreedDto;
 import at.ac.tuwien.sepr.assignment.individual.type.Sex;
 import java.time.LocalDate;
 

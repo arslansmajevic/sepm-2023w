@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import at.ac.tuwien.sepr.assignment.individual.TestBase;
-import at.ac.tuwien.sepr.assignment.individual.dto.HorseListDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.HorseSearchDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.horse.HorseListDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.horse.HorseSearchDto;
 import at.ac.tuwien.sepr.assignment.individual.service.service.HorseService;
 import at.ac.tuwien.sepr.assignment.individual.type.Sex;
 import java.time.LocalDate;

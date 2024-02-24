@@ -1,8 +1,10 @@
 package at.ac.tuwien.sepr.assignment.individual.persistence.impl;
 
-import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.HorseSearchDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.horse.HorseDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.horse.HorseSearchDto;
 import at.ac.tuwien.sepr.assignment.individual.entity.Horse;
+import at.ac.tuwien.sepr.assignment.individual.entity.Participation;
+import at.ac.tuwien.sepr.assignment.individual.entity.Race;
 import at.ac.tuwien.sepr.assignment.individual.exception.FatalException;
 import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 import at.ac.tuwien.sepr.assignment.individual.persistence.HorseDao;
@@ -29,12 +31,15 @@ import org.springframework.stereotype.Repository;
 public class HorseJdbcDao implements HorseDao {
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private static final String TABLE_NAME = "horse";
-  private static final String SQL_SELECT_BY_ID = "SELECT * FROM " + TABLE_NAME + " WHERE id = ?";
+  private static final String TABLE_NAME_HORSE = "horse";
+  private static final String TABLE_NAME_RACE = "race";
+  private static final String TABLE_NAME_BREED = "breed";
+  private static final String TABLE_NAME_PARTICIPATION = "participation";
+  private static final String SQL_SELECT_BY_ID = "SELECT * FROM " + TABLE_NAME_HORSE + " WHERE id = ?";
   private static final String SQL_SELECT_SEARCH = "SELECT  "
           + "    h.id as \"id\", h.name as \"name\", h.sex as \"sex\", h.date_of_birth as \"date_of_birth\""
           + "    , h.height as \"height\", h.weight as \"weight\", h.breed_id as \"breed_id\""
-          + " FROM " + TABLE_NAME + " h LEFT JOIN breed b ON (h.breed_id = b.id)"
+          + " FROM " + TABLE_NAME_HORSE + " h LEFT JOIN " + TABLE_NAME_BREED + " b ON (h.breed_id = b.id)"
           + " WHERE (:name IS NULL OR UPPER(h.name) LIKE UPPER('%'||:name||'%'))"
           + "  AND (:sex IS NULL OR :sex = sex)"
           + "  AND (:bornEarliest IS NULL OR :bornEarliest <= h.date_of_birth)"
@@ -43,7 +48,7 @@ public class HorseJdbcDao implements HorseDao {
 
   private static final String SQL_LIMIT_CLAUSE = " LIMIT :limit";
 
-  private static final String SQL_UPDATE = "UPDATE " + TABLE_NAME
+  private static final String SQL_UPDATE = "UPDATE " + TABLE_NAME_HORSE
       + " SET name = ?"
       + "  , sex = ?"
       + "  , date_of_birth = ?"
@@ -52,11 +57,28 @@ public class HorseJdbcDao implements HorseDao {
       + "  , breed_id = ?"
       + " WHERE id = ?";
 
-  private static final String SQL_INSERT = "INSERT INTO " + TABLE_NAME
+  private static final String SQL_INSERT = "INSERT INTO " + TABLE_NAME_HORSE
           + " (name, sex, date_of_birth, height, weight, breed_id)"
           + " VALUES (?, ?, ?, ?, ?, ?)";
-
-  private static final String SQL_DELETE = "DELETE FROM " + TABLE_NAME + " WHERE id = ?";
+  private static final String SQL_SEARCH_TOURNAMENT_HORSE = "SELECT  "
+          + " h.id as \"id\", h.name as \"name\", h.sex as \"sex\", h.date_of_birth as \"date_of_birth\","
+          + " h.height as \"height\", h.weight as \"weight\", h.breed_id as \"breed_id\""
+          + " FROM " + TABLE_NAME_HORSE + " h"
+          + " LEFT JOIN breed b ON (h.breed_id = b.id)"
+          + " LEFT JOIN race r ON r.first_place = h.id OR r.second_place = h.id"
+          + " WHERE r.tournament_id = ?";
+  private static final String SQL_SEARCH_RACES_ON_TOURNAMENT = "SELECT  "
+          + " r.id as \"id\", r.first_place as \"first_place\", r.second_place as \"second_place\","
+          + " r.winner as \"winner\", r.tournament_id as \"tournament_id\","
+          + " r.round as \"round\""
+          + " FROM " + TABLE_NAME_RACE + " r"
+          + " WHERE tournament_id = ?";
+  private static final String SQL_SEARCH_PARTICIPATIONS_ON_TOURNAMENT = "SELECT  "
+          + " p.id as \"id\", p.tournament_id as \"tournament_id\", p.horse_id as \"horse_id\","
+          + " p.entry as \"entry\""
+          + " FROM " + TABLE_NAME_PARTICIPATION + " p"
+          + " WHERE tournament_id = ?";
+  private static final String SQL_DELETE = "DELETE FROM " + TABLE_NAME_HORSE + " WHERE id = ?";
   private final JdbcTemplate jdbcTemplate;
   private final NamedParameterJdbcTemplate jdbcNamed;
 
@@ -134,6 +156,28 @@ public class HorseJdbcDao implements HorseDao {
   }
 
   @Override
+  public Collection<Horse> getTournamentHorses(Long tournamentId) {
+    LOG.trace("getTournamentHorses({})", tournamentId);
+
+    return jdbcTemplate.query(SQL_SEARCH_TOURNAMENT_HORSE, this::mapRow, tournamentId);
+  }
+
+  @Override
+  public Collection<Race> getHorseRaces(Long tournamentId) {
+    LOG.trace("getHorseRacesOnThisTournamentId({})", tournamentId);
+
+    return jdbcTemplate.query(SQL_SEARCH_RACES_ON_TOURNAMENT, this::mapRaceRow, tournamentId);
+  }
+
+  @Override
+  public Collection<Participation> getTournamentParticipations(Long tournamentId) {
+    LOG.trace("getTournamentParticipations({})", tournamentId);
+
+
+    return jdbcTemplate.query(SQL_SEARCH_PARTICIPATIONS_ON_TOURNAMENT, this::mapParticipationRow, tournamentId);
+  }
+
+  @Override
   public Collection<Horse> search(HorseSearchDto searchParameters) {
     LOG.trace("search({})", searchParameters);
     var query = SQL_SELECT_SEARCH;
@@ -184,4 +228,23 @@ public class HorseJdbcDao implements HorseDao {
         .setBreedId(result.getLong("breed_id"))
         ;
   }
+
+  private Race mapRaceRow(ResultSet resultSet, int rownum) throws SQLException {
+    return new Race()
+            .setRaceId(resultSet.getLong("id"))
+            .setFirstPlace(resultSet.getLong("first_place"))
+            .setSecondPlace(resultSet.getLong("second_place"))
+            .setWinner(resultSet.getLong("winner"))
+            .setRound(resultSet.getLong("round"))
+            .setTournamentId(resultSet.getLong("tournament_id"));
+  }
+
+  private Participation mapParticipationRow(ResultSet resultSet, int rownum) throws SQLException {
+    return new Participation()
+            .setId(resultSet.getLong("id"))
+            .setHorseId(resultSet.getLong("horse_id"))
+            .setTournamentId(resultSet.getLong("tournament_id"))
+            .setEntry((int) resultSet.getLong("entry"));
+  }
+
 }

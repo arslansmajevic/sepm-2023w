@@ -1,8 +1,10 @@
 package at.ac.tuwien.sepr.assignment.individual.persistence;
 
-import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.HorseSearchDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.horse.HorseDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.horse.HorseSearchDto;
 import at.ac.tuwien.sepr.assignment.individual.entity.Horse;
+import at.ac.tuwien.sepr.assignment.individual.entity.Participation;
+import at.ac.tuwien.sepr.assignment.individual.entity.Race;
 import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 import java.util.Collection;
 
@@ -52,4 +54,10 @@ public interface HorseDao {
   Horse create(HorseDetailDto horse);
 
   String delete(long id, String name);
+
+  Collection<Horse> getTournamentHorses(Long tournamentId);
+
+  Collection<Race> getHorseRaces(Long tournamentId);
+
+  Collection<Participation> getTournamentParticipations(Long tournamentId);
 }

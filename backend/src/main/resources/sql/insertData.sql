@@ -1,6 +1,7 @@
 -- insert initial test data
 -- the IDs are hardcoded to enable references between further test data
 -- negative IDs are used to not interfere with user-entered data and allow clean deletion of test data
+DELETE FROM race where id < 0;
 DELETE FROM participation where id < 0;
 DELETE FROM tournament where id < 0;
 DELETE FROM horse WHERE id < 0;
@@ -85,21 +86,28 @@ VALUES
     (-16, '2025 Istanbul Race', '2025-08-25', '2025-10-25'),
     (-17, '2023 Dubai Race', '2023-07-15', '2023-09-15');
 
-INSERT INTO participation (id, tournament_id, horse_id)
+INSERT INTO participation (id, tournament_id, horse_id, entry)
 VALUES
-    (-1, -1, -1),
-    (-2, -1, -2),
-    (-3, -1, -3),
-    (-4, -1, -4),
-    (-5, -1, -5),
-    (-6, -1, -6),
-    (-7, -1, -7),
-    (-8, -1, -8),
-    (-9, -2, -1),
-    (-10, -2, -2),
-    (-11, -2, -3),
-    (-12, -2, -4),
-    (-13, -2, -5),
-    (-14, -2, -6),
-    (-15, -2, -7),
-    (-16, -2, -8);
+    (-1, -1, -1, 1),
+    (-2, -1, -2, 2),
+    (-3, -1, -3, 3),
+    (-4, -1, -4, 4),
+    (-5, -1, -5, 5),
+    (-6, -1, -6, 6),
+    (-7, -1, -7, 7),
+    (-8, -1, -8, 8),
+    (-9, -2, -1, 1),
+    (-10, -2, -2, 2),
+    (-11, -2, -3, 3),
+    (-12, -2, -4, 4),
+    (-13, -2, -5, 5),
+    (-14, -2, -6, 6),
+    (-15, -2, -7, 7),
+    (-16, -2, -8, 8);
+
+INSERT INTO race (id, first_place, second_place, winner, tournament_id, round)
+VALUES
+    (-1, -1, -2, null, -1, 1),
+    (-2, -3, -4, null, -1, 1),
+    (-3, -5, -6, null, -1, 1),
+    (-4, -7, -8, null, -1, 1);

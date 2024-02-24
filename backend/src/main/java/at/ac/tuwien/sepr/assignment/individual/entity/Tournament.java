@@ -7,6 +7,16 @@ public class Tournament {
   private String name;
   private LocalDate dateOfStart;
   private LocalDate dateOfEnd;
+  private Horse[] participants;
+
+  public Horse[] getParticipants() {
+    return participants;
+  }
+
+  public Tournament setParticipants(Horse[] participants) {
+    this.participants = participants;
+    return this;
+  }
 
   public Long getId() {
     return id;

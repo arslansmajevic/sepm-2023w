@@ -7,21 +7,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import at.ac.tuwien.sepr.assignment.individual.TestBase;
 import at.ac.tuwien.sepr.assignment.individual.dto.BreedDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.HorseListDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.horse.HorseDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.horse.HorseListDto;
 import at.ac.tuwien.sepr.assignment.individual.type.Sex;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import net.minidev.json.parser.JSONParser;
-import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

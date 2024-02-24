@@ -1,6 +1,8 @@
 package at.ac.tuwien.sepr.assignment.individual.mapper;
 
-import at.ac.tuwien.sepr.assignment.individual.dto.TournamentListDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.tournament.TournamentDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.tournament.TournamentDetailParticipantDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.tournament.TournamentListDto;
 import at.ac.tuwien.sepr.assignment.individual.entity.Tournament;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,4 +29,14 @@ public class TournamentMapper {
     );
   }
 
+  public TournamentDetailDto entityToTournamentDetailDto(Tournament tournamentResult, TournamentDetailParticipantDto[] participants) {
+
+    return new TournamentDetailDto(
+            tournamentResult.getId(),
+            tournamentResult.getName(),
+            tournamentResult.getDateOfStart(),
+            tournamentResult.getDateOfEnd(),
+            participants
+    );
+  }
 }

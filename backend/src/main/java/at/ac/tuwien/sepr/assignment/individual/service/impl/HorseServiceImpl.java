@@ -1,9 +1,11 @@
 package at.ac.tuwien.sepr.assignment.individual.service.impl;
 
 import at.ac.tuwien.sepr.assignment.individual.dto.BreedDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.HorseListDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.HorseSearchDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.horse.HorseDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.horse.HorseListDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.horse.HorseSearchDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.horse.HorseSelectionDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.tournament.TournamentDetailParticipantDto;
 import at.ac.tuwien.sepr.assignment.individual.entity.Horse;
 import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
 import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
@@ -99,6 +101,17 @@ public class HorseServiceImpl implements HorseService {
     }
 
     return dao.delete(horse.getId(), horse.getName());
+  }
+
+  @Override
+  public TournamentDetailParticipantDto[] getTournamentHorses(Long tournamentId) {
+    LOG.trace("getting tournament horses on tournament id({})", tournamentId);
+
+    var horses = dao.getTournamentHorses(tournamentId);
+    var races = dao.getHorseRaces(tournamentId);
+    var participation = dao.getTournamentParticipations(tournamentId);
+
+    return mapper.entityToTournamentDetailParticipantDto(horses, races, participation);
   }
 
   private Map<Long, BreedDto> breedMapForSingleHorse(Horse horse) {

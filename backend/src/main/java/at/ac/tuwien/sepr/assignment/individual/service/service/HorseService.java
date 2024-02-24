@@ -1,8 +1,10 @@
 package at.ac.tuwien.sepr.assignment.individual.service.service;
 
-import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.HorseListDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.HorseSearchDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.horse.HorseDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.horse.HorseListDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.horse.HorseSearchDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.horse.HorseSelectionDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.tournament.TournamentDetailParticipantDto;
 import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
 import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
@@ -49,4 +51,13 @@ public interface HorseService {
   HorseDetailDto create(HorseDetailDto horse) throws ValidationException;
 
   String delete(long id) throws NotFoundException;
+
+  /**
+   * Get the Tournament Participants and the corresponding details of it.
+   * This will be an array that includes horse id, horse name, horse date of birth, horse entry number and horse round reached.
+   *
+   * @param tournamentId the ID of the tournament
+   * @return an array of all participants on the asked tournament {@code tournamentId}
+   */
+  TournamentDetailParticipantDto[] getTournamentHorses(Long tournamentId);
 }
