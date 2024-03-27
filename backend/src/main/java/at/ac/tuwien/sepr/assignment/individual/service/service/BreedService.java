@@ -7,6 +7,9 @@ import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
 import java.util.Set;
 import java.util.stream.Stream;
 
+/**
+ * Service for working with breeds.
+ */
 public interface BreedService {
   /**
    * Retrieve all breeds from the persistent data store.
@@ -33,5 +36,13 @@ public interface BreedService {
    */
   Stream<BreedDto> search(BreedSearchDto searchParams);
 
+  /**
+   * Create a new breed entry in the persistent data store.
+   * Throws a {@link ValidationException} if the provided horse data is invalid.
+   *
+   * @param horse the breed data to create
+   * @return the created breed
+   * @throws ValidationException if the provided horse data is invalid
+   */
   BreedDto create(BreedDto horse) throws ValidationException;
 }

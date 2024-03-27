@@ -48,8 +48,22 @@ public interface HorseService {
    */
   HorseDetailDto getById(long id) throws NotFoundException;
 
+  /**
+   * Create a new horse entry in the persistent data store.
+   *
+   * @param horse the horse data to create
+   * @return the created horse
+   * @throws ValidationException if the provided horse data is invalid
+   */
   HorseDetailDto create(HorseDetailDto horse) throws ValidationException;
 
+  /**
+   * Delete the horse with the given ID from the persistent data store.
+   *
+   * @param id the ID of the horse to delete
+   * @return a message indicating the result of the deletion
+   * @throws NotFoundException if the horse with the given ID does not exist in the persistent data store
+   */
   String delete(long id) throws NotFoundException;
 
   /**
